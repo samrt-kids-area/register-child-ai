@@ -11,7 +11,7 @@ import os
 # MongoDB setup
 mongo_client = MongoClient("mongodb+srv://ah01211293047:1Sc5YkBzDBYORnbA@cluster0.5h4nt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 db = mongo_client["test"]  # Database name
-collection = db["Children"]  # Collection name
+collection = db["childrens"]  # Collection name
 
 # Cloudinary configuration
 CLOUDINARY_CLOUD_NAME = "dc4d0qogi"
@@ -85,11 +85,21 @@ def register_user(name, image_path,parent):
     except Exception as e:
         print(f"Error: {e}")
 
-if __name__ == "__main__":
+""" if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: python register_user.py <name> <image_path>")
         sys.exit(1)
 
     name = sys.argv[1]
     image_path = sys.argv[2]
-    register_user(name, image_path)
+    register_user(name, image_path) """
+
+if __name__ == "__main__":
+    if len(sys.argv) != 4:
+        print("Usage: python register_user.py <name> <image_path> <parent_id>")
+        sys.exit(1)
+
+    name = sys.argv[1]
+    image_path = sys.argv[2]
+    parent = sys.argv[3]
+    register_user(name, image_path, parent)

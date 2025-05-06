@@ -69,7 +69,7 @@ const ParentModel = mongoose.model("Parent", {
   ],
 });
 
-// Upload route (register face)
+/* // Upload route (register face)
 app.post("/register-child", upload.single("photo"), async (req, res) => {
   const parent = await ParentModel.findById(req.body.parentId);
   if (!parent) {
@@ -112,6 +112,50 @@ app.post("/register-child", upload.single("photo"), async (req, res) => {
 
     res.send({ message: "Image processed and saved", data: parsedResult });
   });
+}); */
+
+app.post("/register-child", upload.single("image"), async (req, res) => {
+  try {
+    const { childName, parentId } = req.body;
+    const imagePath = req.file.path;
+
+    if (!childName || !parentId) {
+      return res.status(400).json({ error: "Missing name or parent ID" });
+    }
+
+    const python = spawn("python3", [
+      "register_user.py",
+      childName,
+      imagePath,
+      parentId,
+    ]);
+
+    let data = "";
+    let error = "";
+
+    python.stdout.on("data", (chunk) => {
+      data += chunk.toString();
+    });
+
+    python.stderr.on("data", (err) => {
+      error += err.toString();
+    });
+
+    python.on("close", (code) => {
+      if (error) {
+        console.error("Python error:", error);
+      }
+
+      if (data.includes("Success:")) {
+        res.status(200).json({ success: true, message: data.trim() });
+      } else {
+        res.status(400).json({ success: false, message: data.trim() });
+      }
+    });
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 // Live stream route
@@ -132,11 +176,8 @@ app.get("/start-stream", (req, res) => {
 });
 
 app.post("/check-face", upload.single("image"), async (req, res) => {
-  const { childId, image } = req?.body;
-  //{ childId, image }
-  if (!childId || !image) {
-    return res.status(400).json({ error: "Missing data" });
-  }
+  const { childId } = req?.body;
+  const imagePath = req.file.path;
 
   try {
     const child = await Children.findOne({ _id: childId });
@@ -144,9 +185,7 @@ app.post("/check-face", upload.single("image"), async (req, res) => {
     if (!child) return res.json({ found: false });
 
     // احفظ الصورة مؤقتاً
-    const base64Data = image.replace(/^data:image\/jpeg;base64,/, "");
-    const filePath = path.join(__dirname, "temp.jpg");
-    fs.writeFileSync(filePath, base64Data, "base64");
+    const filePath = imagePath; // الصورة محفوظة تلقائياً في مجلد temporary بفضل multer
 
     // شغّل سكريبت بايثون مع الإحداثيات
     const python = spawn("python3", [
