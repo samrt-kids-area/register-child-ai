@@ -11,7 +11,7 @@ import os
 # MongoDB setup
 mongo_client = MongoClient("mongodb+srv://ah01211293047:1Sc5YkBzDBYORnbA@cluster0.5h4nt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 db = mongo_client["test"]  # Database name
-collection = db["childrens"]  # Collection name
+collection = db["children"]  # Collection name
 
 # Cloudinary configuration
 CLOUDINARY_CLOUD_NAME = "dc4d0qogi"
