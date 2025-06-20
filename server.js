@@ -50,12 +50,12 @@ app.post("/register-child", upload.single("image"), async (req, res) => {
       if (error) {
         console.error("Python error:", error);
       }
-
-      if (data.includes("Success:")) {
-        res.status(200).json({ success: true, message: data.trim() });
+      res.status(200).json({ success: true, message: "Success", data: data });
+      /*  if (Array.isArray(data)) {
+        res.status(200).json({ success: true, message: "Success", data: data });
       } else {
-        res.status(400).json({ success: false, message: data.trim() });
-      }
+        res.status(400).json({ success: false, message: data });
+      } */
     });
   } catch (err) {
     console.error("Error:", err);

@@ -11,7 +11,7 @@ import os
 # MongoDB setup
 mongo_client = MongoClient("mongodb+srv://ah01211293047:1Sc5YkBzDBYORnbA@cluster0.5h4nt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 db = mongo_client["test"]  # Database name
-collection = db["children"]  # Collection name
+collection = db["childrens"]  # Collection name
 
 # Cloudinary configuration
 CLOUDINARY_CLOUD_NAME = "dc4d0qogi"
@@ -78,9 +78,14 @@ def register_user(name, image_path,parent):
             "photo": image_url,  # Store the image URL
             "parent": parent
         }
-        collection.insert_one(user_data)
+        """ collection.insert_one(user_data) """
+        """ update with id of child """
+        """ collection.update_one(
+            {"_id": parent},
+            {"$push": {"children": user_data}}
+        ) """
 
-        print("Success: User registered successfully!")
+        print(face_encoding.tolist())
 
     except Exception as e:
         print(f"Error: {e}")
